@@ -1,5 +1,6 @@
 import { TextInput, TextInputProps } from 'react-native';
 
+
 import colors from 'tailwindcss/colors';
 
 type Props = TextInputProps & {
@@ -16,4 +17,7 @@ export function Input({ ...rest }: Props) {
 
         />
     )
+
+
 }
+
