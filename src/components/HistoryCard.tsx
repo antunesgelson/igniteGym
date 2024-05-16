@@ -5,7 +5,10 @@ export function HistoryCard() {
     return (
         <View className="flex-row items-center px-5 py-4 mb-3 bg-gray-600 rounded-md ">
             <View className="flex-1">
-                <Text className="text-white text-md font-heading" style={{ textTransform: 'capitalize' }}>
+                <Text
+                    className="text-white text-md font-heading"
+                    style={{ textTransform: 'capitalize' }}
+                    numberOfLines={1}>
                     costas
                 </Text>
 
