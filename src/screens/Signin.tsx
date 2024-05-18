@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
 import { useAuth } from '@hooks/useAuth'
+import { AppError } from '@utils/AppError'
+import Toast from 'react-native-toast-message'
 
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
@@ -15,6 +17,8 @@ import LogoSvg from '@assets/logo.svg'
 
 import { Button } from "@components/Button"
 import { Input } from "@components/Input"
+import { useFocusEffect } from '@react-navigation/native'
+import { useCallback, useState } from 'react'
 
 
 type FormDataProps = {
@@ -30,6 +34,8 @@ const signUpSchema = yup.object({
 })
 
 export function SignIn() {
+    const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingSignUp, setIsLoadingSignUp] = useState(false)
     const { signIn } = useAuth()
     const navigation = useNavigation<AuthNavigatorRoutesProps>()
 
@@ -39,12 +45,41 @@ export function SignIn() {
 
 
     async function handleSignIn({ email, password }: FormDataProps) {
-        await signIn(email, password)
+        try {
+            setIsLoading(true)
+            await signIn(email, password)
+
+        }
+
+        catch (error) {
+
+            setIsLoading(false)
+
+            const isAppError = error instanceof AppError;
+            const title = isAppError ? error.menssage : 'Não foi possível entrar.'
+
+            Toast.show({
+                type: 'error',
+                text1: title,
+                text2: isAppError ? 'Insira um endereço de e-mail e uma senha válidos.' : 'Tente novamente mais tarde.'
+
+            })
+        }
+
     }
 
+
+
     function handleNewAccount() {
-        navigation.navigate('signUp')
+        navigation.navigate('signUp');
+
     }
+
+    useFocusEffect(
+        useCallback(() => {
+            setIsLoadingSignUp(false);
+        }, [])
+    );
 
     return (
         <View className="flex-1 bg-gray-700  relative ">
@@ -111,6 +146,9 @@ export function SignIn() {
                             className="mt-3"
                             onPress={handleSubmit(handleSignIn)}
                             title="Acessar"
+                            isLoading={isLoading}
+                            disabled={isLoading}
+
                         />
                     </View>
 
@@ -121,7 +159,10 @@ export function SignIn() {
                         </Text>
 
                         <Button
+                            onPressIn={() => setIsLoadingSignUp(true)}
                             onPress={handleNewAccount}
+                            disabled={isLoadingSignUp}
+                            isLoading={isLoadingSignUp}
                             variant="outline"
                             title="Criar conta"
                         />

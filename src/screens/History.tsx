@@ -1,39 +1,66 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SectionList, Text, View } from "react-native";
 
+import { useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from "react-native-toast-message";
 
 import { HistoryCard } from "@components/HistoryCard";
 import { ScreenHeader } from "@components/ScreenHeader";
 
+import { api } from "@services/api";
+import { AppError } from "@utils/AppError";
+
+import { HistoryDTO } from "@dtos/HistoryDTO";
+import { HistoryDayDTO } from "@dtos/HistorybyDayDTO";
+
+
+
+
 
 export function History() {
+    const [isLoading, setIsloading] = useState(true)
+    const [exercises, setExercises] = useState<HistoryDayDTO[]>([])
 
-    const [exercises, setExercises] = useState([
-        {
-            title: '16/09/2024',
-            data: ['Puxada Frontal', 'Remada unilateral']
-        },
 
-        {
-            title: '24/09/2024',
-            data: ['Puxada Frontal']
+
+    async function fetchHisotry() {
+        try {
+            setIsloading(true)
+
+            const { data } = await api.get('/history')
+            setExercises(data)
         }
-    ])
+        catch (error) {
+            const isAppError = error instanceof AppError
+            const title = isAppError ? error.menssage : 'Naõ foi possivel carregar o histórico'
+            Toast.show({
+                type: 'error',
+                text1: title,
+                text2: isAppError ? ' ' : 'Tente novamente mais tarde.'
+
+            })
+        }
+    }
 
 
+    useFocusEffect(useCallback(() => {
+        fetchHisotry()
+    }, []))
     return (
         <View className=" ">
             <SafeAreaView className="h-full">
                 <ScreenHeader title='Histórico de Exercícios' />
- 
+
 
                 <SectionList
-                className="px-6"
+                    className="px-6"
                     sections={exercises}
-                    keyExtractor={item => item}
+                    keyExtractor={item => item.id}
                     renderItem={({ item }) => (
-                        <HistoryCard />
+                        <HistoryCard
+                            data={item as HistoryDTO}
+                        />
 
                     )}
 
@@ -41,7 +68,7 @@ export function History() {
                         <Text className="text-gray-200 text-md mt-10 mb-3">{section.title}</Text>
                     )}
 
-                    contentContainerStyle={exercises.length === 0 && {flex: 1, justifyContent: 'center'}}
+                    contentContainerStyle={exercises.length === 0 && { flex: 1, justifyContent: 'center' }}
 
                     ListEmptyComponent={() => (
                         <Text className="text-gray-100 text-center">
@@ -49,7 +76,7 @@ export function History() {
                             Vamos fazer exercícios hoje ?
                         </Text>
                     )}
-                    
+
                     showsVerticalScrollIndicator={false}
                 />
 

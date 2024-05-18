@@ -17,9 +17,9 @@ import colors from 'tailwindcss/colors'
 
 type AppRoutes = {
     home: undefined
+    exercise: { exerciseId: string }
     history: undefined
     profile: undefined
-    exercise: undefined
 
 }
 

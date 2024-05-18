@@ -1,18 +1,21 @@
+import { ExerciseDTO } from '@dtos/ExerciseDTO'
 import { Entypo } from '@expo/vector-icons'
 import { Image, Text, TouchableOpacity, TouchableOpacityProps, View } from "react-native"
 
 import colors from 'tailwindcss/colors'
 
-type Props = TouchableOpacityProps & {
+import { api } from "@services/api"
 
+type Props = TouchableOpacityProps & {
+    data: ExerciseDTO
 }
 
-export function ExerciseCard({ ...rest }: Props) {
+export function ExerciseCard({ data, ...rest }: Props) {
     return (
         <TouchableOpacity {...rest}>
             <View className="flex-row items-center  bg-gray-500 p-2 pr-4 rounded-md mb-3">
                 <Image
-                    source={{ uri: 'https://blog.ciaathletica.com.br/wp-content/uploads/2023/05/Cia-Athletica-Remada-curvada-Autores-Grupo-S2-Marketing-Freepik.jpg' }}
+                    source={{ uri: `${api.defaults.baseURL}/exercise/thumb/${data.thumb}` }}
                     alt="Imagem do exercício"
                     width={60}
                     height={60}
@@ -22,14 +25,14 @@ export function ExerciseCard({ ...rest }: Props) {
 
                 <View className="flex-1">
                     <Text className="text-white text-lg font-heading">
-                        Remada Curvada
+                        {data.name}
                     </Text>
 
                     <Text
                         className="text-gray-200 text-sm mt-1"
                         numberOfLines={2}
                     >
-                        3 séries x 12 repetições
+                        {data.series} séries x {data.repetitions} repetições
                     </Text>
                 </View>
 
@@ -37,7 +40,7 @@ export function ExerciseCard({ ...rest }: Props) {
                     name="chevron-right"
                     size={24}
                     color={colors.gray[500]}
-                   />
+                />
 
 
 

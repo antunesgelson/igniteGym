@@ -1,15 +1,30 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import { Text, TouchableOpacity, View } from "react-native";
+
+import { useAuth } from "@hooks/useAuth";
+
+import defaultUserPhotoImg from '@assets/userPhotoDefault.png';
+import { MaterialIcons } from '@expo/vector-icons';
+
 import colors from 'tailwindcss/colors';
+
 import { UserPhoto } from "./UserPhoto";
 
+import { api } from "@services/api";
+
+
 export function HomeHeader() {
+
+    const { user, signOut } = useAuth()
+
     return (
         <View className="flex-row  items-center  bg-gray-600 pt-10 pb-5 px-8 ">
             <UserPhoto
                 className="mr-4"
                 size={62}
-                source={{ uri: `https://github.com/smkwow.png` }}
+                source={
+                    user.avatar
+                        ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }
+                        : defaultUserPhotoImg}
                 alt="Imagem do usuário"
             />
 
@@ -19,11 +34,11 @@ export function HomeHeader() {
                 </Text>
 
                 <Text className="text-gray-100 font-heading text-md">
-                    Gelson Antunes
+                    {user.name}
                 </Text>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={signOut}>
                 <MaterialIcons
                     name="logout"
                     color={colors.gray[200]}

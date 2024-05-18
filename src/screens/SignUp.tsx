@@ -1,3 +1,4 @@
+import { useState } from 'react'
 
 import { useNavigation } from '@react-navigation/native'
 import { ImageBackground, ScrollView, Text, View } from "react-native"
@@ -20,6 +21,7 @@ import LogoSvg from '@assets/logo.svg'
 
 import { Button } from "@components/Button"
 import { Input } from "@components/Input"
+import { useAuth } from '@hooks/useAuth'
 
 
 
@@ -40,13 +42,14 @@ const signUpSchema = yup.object({
 })
 
 export function SignUp() {
+    const [isLoading, setIsLoading] = useState(false)
     const { control, handleSubmit, formState: { errors } } = useForm<FormDataProps>({
         resolver: yupResolver(signUpSchema)
 
     })
 
     const navigation = useNavigation<AuthNavigatorRoutesProps>()
-
+    const { signIn } = useAuth()
 
 
     function handleBack() {
@@ -55,13 +58,15 @@ export function SignUp() {
 
 
     async function handleSignUp({ name, email, password }: FormDataProps) {
+        setIsLoading(true)
         try {
-            const response = await api.post('/users', { name, email, password })
-            console.log(response.data)
+            await api.post('/users', { name, email, password })
+            await signIn(email, password)
         }
         catch (error) {
             const isAppError = error instanceof AppError;
             const title = isAppError ? error.menssage : 'Não foi possível criar a conta.'
+            setIsLoading(false)
 
             Toast.show({
                 type: 'error',
@@ -171,8 +176,10 @@ export function SignUp() {
 
                         <Button
                             className="mt-3"
-                            onPress={handleSubmit(handleSignUp)}
                             title="Criar e acessar"
+                            onPress={handleSubmit(handleSignUp)}
+                            isLoading={isLoading}
+                            disabled={isLoading}
                         />
                     </View>
 

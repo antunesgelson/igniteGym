@@ -5,10 +5,12 @@ import Toast from 'react-native-toast-message';
 
 import { AuthContextProvider } from '@contexts/AuthContext';
 
-import { Loading } from '@components/Loading';
 import { toastConfig } from '@components/toastConfig';
 
+import { Loading } from '@components/Loading';
 import { Roboto_400Regular, Roboto_700Bold, useFonts } from '@expo-google-fonts/roboto';
+
+
 
 
 export default function App() {
@@ -20,7 +22,7 @@ export default function App() {
 
   return (
 
-    <View className="flex-1   bg-gray-700 ">
+    <View className="flex-1    bg-gray-700 ">
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"
@@ -30,7 +32,7 @@ export default function App() {
 
       <AuthContextProvider>
 
-        {fontsLoaded ? <Routes /> : <Loading />}
+        {fontsLoaded ? <Routes /> : <Loading size='large' />}
 
         <Toast config={toastConfig} />
 
