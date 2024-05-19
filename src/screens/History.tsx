@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from "react-native-toast-message";
 
 import { HistoryCard } from "@components/HistoryCard";
+import { Loading } from "@components/Loading";
 import { ScreenHeader } from "@components/ScreenHeader";
 
 import { api } from "@services/api";
@@ -19,7 +20,7 @@ import { HistoryDayDTO } from "@dtos/HistorybyDayDTO";
 
 
 export function History() {
-    const [isLoading, setIsloading] = useState(true)
+    const [isLoading, setIsloading] = useState(false)
     const [exercises, setExercises] = useState<HistoryDayDTO[]>([])
 
 
@@ -41,6 +42,9 @@ export function History() {
 
             })
         }
+        finally {
+            setIsloading(false)
+        }
     }
 
 
@@ -53,32 +57,38 @@ export function History() {
                 <ScreenHeader title='Histórico de Exercícios' />
 
 
-                <SectionList
-                    className="px-6"
-                    sections={exercises}
-                    keyExtractor={item => item.id}
-                    renderItem={({ item }) => (
-                        <HistoryCard
-                            data={item as HistoryDTO}
-                        />
+                {isLoading ? <Loading /> :
+                    <SectionList
+                        className="px-6"
+                        sections={exercises}
+                        keyExtractor={item => item.id}
+                        renderItem={({ item }) => (
+                            <HistoryCard
+                                data={item as HistoryDTO}
+                            />
 
-                    )}
+                        )}
 
-                    renderSectionHeader={({ section }) => (
-                        <Text className="text-gray-200 text-md mt-10 mb-3">{section.title}</Text>
-                    )}
+                        renderSectionHeader={({ section }) => (
+                            <Text className="text-gray-200 text-md mt-10 mb-3">{section.title}</Text>
+                        )}
 
-                    contentContainerStyle={exercises.length === 0 && { flex: 1, justifyContent: 'center' }}
+                        contentContainerStyle={exercises.length === 0 && { flex: 1, justifyContent: 'center' }}
 
-                    ListEmptyComponent={() => (
-                        <Text className="text-gray-100 text-center">
-                            Não há exercícios registrados ainda. {'\n'}
-                            Vamos fazer exercícios hoje ?
-                        </Text>
-                    )}
+                        ListEmptyComponent={() => (
+                            <Text className="text-gray-100 text-center">
+                                Não há exercícios registrados ainda. {'\n'}
+                                Vamos fazer exercícios hoje ?
+                            </Text>
+                        )}
 
-                    showsVerticalScrollIndicator={false}
-                />
+                        showsVerticalScrollIndicator={false}
+                    />
+
+
+
+                }
+
 
 
             </SafeAreaView>
