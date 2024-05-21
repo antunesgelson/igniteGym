@@ -59,6 +59,7 @@ export function AppRoutes() {
                 name="history"
                 component={History}
                 options={{
+                    tabBarBadge: undefined, //  Adiciona um badge no icone do tabbar 
                     tabBarIcon: ({ color }) => (
                         <HistorySvg fill={color} width={iconSize} height={iconSize} />
                     )
