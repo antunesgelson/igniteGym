@@ -186,6 +186,7 @@ export function SignUp() {
 
                     <View className="w-10/12 ">
                         <Button
+                        className='mb-4'
                             onPress={handleBack}
                             variant="outline"
                             title="Voltar para login"

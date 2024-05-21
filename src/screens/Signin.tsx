@@ -159,6 +159,7 @@ export function SignIn() {
                         </Text>
 
                         <Button
+                        className='mb-4'
                             onPressIn={() => setIsLoadingSignUp(true)}
                             onPress={handleNewAccount}
                             disabled={isLoadingSignUp}

@@ -3,6 +3,10 @@ import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
 import { AppRoutes } from './app.routes'
 import { AuthRoutes } from './auth.routes'
 
+import { useEffect } from 'react'
+import { NotificationWillDisplayEvent, OneSignal } from 'react-native-onesignal'
+import Toast from 'react-native-toast-message'
+
 
 
 import { Loading } from '@components/Loading'
@@ -15,8 +19,34 @@ export function Routes() {
     theme.colors.background = 'transparent'
 
 
+
+
+    useEffect(() => {
+
+        //Forground notification
+        const handleNotification = (event: NotificationWillDisplayEvent): void => {
+            event.preventDefault()
+            const response = event.getNotification()
+            // console.log("notification =>", response)
+            Toast.show({
+                type: 'info',
+                text1: response.title,
+                text2: response.body,
+                onPress: () => {
+                    console.log('toast clicked')
+                }
+
+            })
+        }
+
+        OneSignal.Notifications.addEventListener('foregroundWillDisplay', handleNotification)
+
+        return () => OneSignal.Notifications.removeEventListener('foregroundWillDisplay', handleNotification)
+    }, []);
+
+
     if (isLoadingUserStorageData) {
-        return <Loading  />
+        return <Loading />
 
     }
 
